@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import TYPE_CHECKING
 
 from .fingerprint import Fingerprint, random_fingerprint
@@ -51,7 +51,11 @@ def _proxy(proxy: str | None):
 
 
 def _resolve_chrome_profile(user_data_dir: str) -> tuple[str, list[str], str | None]:
-    path = Path(user_data_dir)
+    path = (
+        PureWindowsPath(user_data_dir)
+        if "\\" in user_data_dir or ":" in user_data_dir[:3]
+        else Path(user_data_dir)
+    )
     launch_dir = str(path)
     launch_args: list[str] = []
     channel: str | None = None
